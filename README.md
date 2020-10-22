@@ -41,9 +41,9 @@ python3 game.py
 
 ## Screenshots:
 
-[](https://i.imgur.com/Xupy2zt.png)
+![](https://i.imgur.com/Xupy2zt.png)
 
-[](https://i.imgur.com/oGsGJYy.png)
+![](https://i.imgur.com/oGsGJYy.png)
 
-[](https://i.imgur.com/5l77Uqn.png)
+![](https://i.imgur.com/5l77Uqn.png)
 
