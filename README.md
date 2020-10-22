@@ -7,17 +7,20 @@
 
 ![](https://i.imgur.com/nDM0JIb.png)
 
+---
 
 ## Game synopsis:
 
 Space survivor is a 2D game written in python3 with the [Arcade library](https://arcade.academy/), where the player play a spaceship trying avoid missiles.
 
+---
 
 ## Library & Dependencies installation:
 
 You can do that either on Windows, Linux or Mac OS, and you can go step by step by following this link:
 - [Installation](https://arcade.academy/installation.html)
 
+---
 
 ### Run the game:
 
@@ -25,6 +28,7 @@ If you choose to run the game from the Terminal you can use the following comman
 ```python
 python3 game.py
 ```
+---
 
 ## Instructions:
 
@@ -37,7 +41,7 @@ python3 game.py
 | Pause         | P or Espace 	|
 | Quit          | ESCAPE        |
 
-
+---
 
 ## Screenshots:
 
