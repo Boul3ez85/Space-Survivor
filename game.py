@@ -2,10 +2,12 @@ import arcade
 import os
 import random
 
+
 SCREEN_WIDTH = 1366
 SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Space Survivor"
 SCALING = 5 / 7
+SCALING_PROJECTILE = 1
 
 
 class FlyingSprite(arcade.Sprite):
@@ -22,7 +24,10 @@ class FlyingSprite(arcade.Sprite):
         super().update()
 
         # Remove if off the screen
-        if self.right < 0:
+        if (
+            self.velocity[0] < 0 and self.right < 0
+            or self.velocity[0] > 0 and self.left > SCREEN_WIDTH
+        ):
             self.remove_from_sprite_lists()
 
 
@@ -37,10 +42,10 @@ class SpaceSurvivor(arcade.Window):
         os.chdir(res)
 
         # Background image will be stored in this variable
-        self.acc_time = None
-        self.interval = None
         self.collision_sound = None
-        self.background_music = None
+        self.music = None
+        self.enemyremoving_sound = None
+        self.projectile_sound = None
         self.background = None
         self.paused = False
         self.game_over = False
@@ -48,6 +53,7 @@ class SpaceSurvivor(arcade.Window):
         self.clouds_list = arcade.SpriteList()
         self.all_sprites = arcade.SpriteList()
         self.player = arcade.Sprite()
+        self.projectile_list = arcade.SpriteList()
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -65,14 +71,39 @@ class SpaceSurvivor(arcade.Window):
         arcade.schedule(self.add_cloud, 1)
 
         # play music in game
-        self.background_music = arcade.load_sound(":resources:music/1918.mp3")
+        self.music = arcade.load_sound("res/sounds/alien-spaceship_daniel_simion.wav")
 
         # add collision sound
-        self.collision_sound = arcade.load_sound(":resources:sounds/explosion1.wav")
+        self.collision_sound = arcade.load_sound("res/sounds/Explosion-SoundBible.com-2019248186.wav")
+
+        self.enemyremoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
+
+        self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
+
+        # playing music background in loop
+        arcade.play_sound(self.music)
+        arcade.schedule(self.play_background_music, 16)
 
     def play_background_music(self, delta_time: int = 0):
-        """Starts playing the background music"""
-        self.background_music.play()
+        """Starts playing the background music
+        """
+        self.music.play()
+
+    def fire_missile(self):
+        """Fires a missile against the incoming enemies
+        """
+        if self.paused:
+            return
+
+        projectile = FlyingSprite("res/images/spaceMissiles_038.png", SCALING_PROJECTILE)
+
+        projectile.center_x = self.player.center_x + 50
+        projectile.center_y = self.player.center_y
+        projectile.angle = -90
+        projectile.velocity = (20, 0)
+
+        self.projectile_list.append(projectile)
+        self.all_sprites.append(projectile)
 
     def add_enemy(self, delta_time: float):
         """Adds a new enemy to the screen
@@ -124,17 +155,14 @@ class SpaceSurvivor(arcade.Window):
         self.enemies_list.draw()
         self.clouds_list.draw()
         self.player.draw()
+        self.projectile_list.draw()
 
         # if game is over is true
         if self.game_over:
-            message = f"Game Over!"
+            message = f"Game Over"
             arcade.draw_text(message, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 50,
-                             align="center", anchor_x="center", anchor_y="center")
+                             align="center", anchor_x="center", anchor_y="center", bold=True)
 
-        if self.paused:
-            message1 = f"PAUSE"
-            arcade.draw_text(message1, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 50,
-                             align="center", anchor_x="center", anchor_y="center")
 
     def on_key_press(self, symbol: int, modifiers: int):
         """ Handle user keyboard input
@@ -152,7 +180,8 @@ class SpaceSurvivor(arcade.Window):
             # quit game window
             arcade.close_window()
 
-        if symbol == arcade.key.P or symbol == arcade.key.SPACE:
+        if symbol == arcade.key.P:
+            # pause the game
             self.paused = not self.paused
             if self.paused:
                 arcade.unschedule(self.add_enemy)
@@ -160,6 +189,11 @@ class SpaceSurvivor(arcade.Window):
             else:
                 arcade.schedule(self.add_enemy, 0.4)
                 arcade.schedule(self.add_cloud, 1)
+
+        if symbol == arcade.key.SPACE:
+            # throwing projectiles against enemy
+            self.fire_missile()
+            arcade.play_sound(self.projectile_sound)
 
         if symbol == arcade.key.Z or symbol == arcade.key.UP:
             # move player up
@@ -209,16 +243,26 @@ class SpaceSurvivor(arcade.Window):
         if self.paused:
             return
 
-
-        # disable movement pressed by key/arrows once the game is over
+        # remove player from the window once the game is over
         if self.game_over:
             self.player.remove_from_sprite_lists()
 
         # check for collision
-        if self.player.collides_with_list(self.enemies_list):
+        if len(self.player.collides_with_list(self.enemies_list)) > 0:
             arcade.play_sound(self.collision_sound)
             self.game_over = True
+            arcade.schedule(lambda delta_time: arcade.close_window(), 6)
 
+        # remove enemies those hit by projectiles
+        for enemy in self.enemies_list:
+            collisions = enemy.collides_with_list(self.projectile_list)
+            if collisions:
+                enemy.remove_from_sprite_lists()
+                arcade.play_sound(self.enemyremoving_sound)
+                for projectile in collisions:
+                    projectile.remove_from_sprite_lists()
+
+        # updating enemies
         for enemy in self.all_sprites:
             enemy.update()
 
@@ -234,6 +278,16 @@ class SpaceSurvivor(arcade.Window):
 
         if self.player.left < 0:
             self.player.left = 0
+
+        # Update everything
+        for sprite in self.all_sprites:
+            sprite.center_x = int(
+                sprite.center_x + sprite.change_x * delta_time
+            )
+            sprite.center_y = int(
+                sprite.center_y + sprite.change_y * delta_time
+            )
+
 
 
 def main():
