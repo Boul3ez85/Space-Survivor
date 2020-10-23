@@ -3,7 +3,7 @@
 
 
 ![GitHub](https://img.shields.io/github/license/Boul3ez85/Space-Survivor) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/P5) ![Discord](https://img.shields.io/discord/768743692294815774) ![Twitter Follow](https://img.shields.io/twitter/follow/benrebahmoez1?label=Follow%20here&style=social)
-
+<iframe src="https://discord.com/widget?id=768743692294815774&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 ![](https://i.imgur.com/nDM0JIb.png)
 
