@@ -2,7 +2,12 @@
 
 
 
-![GitHub](https://img.shields.io/github/license/Boul3ez85/Space-Survivor) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/P5) ![Discord](https://img.shields.io/discord/768743692294815774)  ![Twitter Follow](https://img.shields.io/twitter/follow/benrebahmoez1?label=Follow%20here&style=social)
+![GitHub](https://img.shields.io/github/license/Boul3ez85/Space-Survivor) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/P5) ![Twitter Follow](https://img.shields.io/twitter/follow/benrebahmoez1?label=Follow%20here&style=social)
+<p>
+  <a href=“res/images/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636861742d6f6e253230646973636f72642d3732383964612e737667.svg” title=“discord”>
+    <img src=“https://discord.com/channels/768743692294815774/768743692294815777” alt=“homepage” />
+  </a>
+</p>
 
 
 ![](https://i.imgur.com/nDM0JIb.png)
