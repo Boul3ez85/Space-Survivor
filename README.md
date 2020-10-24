@@ -5,7 +5,7 @@
 ![GitHub](https://img.shields.io/github/license/Boul3ez85/Space-Survivor) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/P5) ![Twitter Follow](https://img.shields.io/twitter/follow/benrebahmoez1?label=Follow%20here&style=social)
 <p>
   <a href=https://discord.com/channels/768743692294815774/768743692294815777”>
-    <img src=“https://imgur.com/kPceEiS”/>
+    <img src=“https://i.imgur.com/kPceEiS.png”/>
   </a>
 </p>
 
