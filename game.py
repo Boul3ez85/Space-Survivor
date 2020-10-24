@@ -1,4 +1,5 @@
 import arcade
+import math
 import os
 import random
 
@@ -7,7 +8,8 @@ SCREEN_WIDTH = 1366
 SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Space Survivor"
 SCALING = 5 / 7
-SCALING_PROJECTILE = 1
+BULLET_SPEED = 3
+SCALING_ENEMY = 1 / 5
 
 
 class FlyingSprite(arcade.Sprite):
@@ -41,7 +43,8 @@ class SpaceSurvivor(arcade.Window):
         res = os.path.dirname(os.path.abspath(__file__))
         os.chdir(res)
 
-        # Background image will be stored in this variable
+        self.frame_count = 0
+
         self.collision_sound = None
         self.music = None
         self.enemyremoving_sound = None
@@ -54,6 +57,7 @@ class SpaceSurvivor(arcade.Window):
         self.all_sprites = arcade.SpriteList()
         self.player = arcade.Sprite()
         self.projectile_list = arcade.SpriteList()
+        self.bullet_list = arcade.SpriteList()
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -75,19 +79,13 @@ class SpaceSurvivor(arcade.Window):
 
         # add collision sound
         self.collision_sound = arcade.load_sound("res/sounds/Explosion-SoundBible.com-2019248186.wav")
-
         self.enemyremoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
 
         self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
 
         # playing music background in loop
-        arcade.play_sound(self.music)
-        arcade.schedule(self.play_background_music, 16)
-
-    def play_background_music(self, delta_time: int = 0):
-        """Starts playing the background music
-        """
-        self.music.play()
+        # arcade.schedule(self.play_background_music, 16)
+        self.music.play(volume=0.02)
 
     def fire_missile(self):
         """Fires a missile against the incoming enemies
@@ -95,7 +93,7 @@ class SpaceSurvivor(arcade.Window):
         if self.paused:
             return
 
-        projectile = FlyingSprite("res/images/spaceMissiles_038.png", SCALING_PROJECTILE)
+        projectile = FlyingSprite("res/images/spaceMissiles_038.png")
 
         projectile.center_x = self.player.center_x + 50
         projectile.center_y = self.player.center_y
@@ -111,14 +109,15 @@ class SpaceSurvivor(arcade.Window):
             delta_time {float} -- How much time has passed since the last call
         """
 
-        enemy = FlyingSprite("res/images/spaceMissiles_040.png")
+        enemy = FlyingSprite("res/images/pngwave.png", SCALING_ENEMY)
+        # enemy.angle = 180
 
         # Set its position to a random height and off screen right
         enemy.left = random.randint(self.width, self.width + 80)
         enemy.top = random.randint(10, self.height - 10)
 
         # Set its speed to a random speed heading left
-        enemy.velocity = (random.randint(-7, -5), 0)
+        enemy.velocity = (random.randint(-6, -4), 0)
 
         # Add enemy to the enemies_list
         self.enemies_list.append(enemy)
@@ -138,7 +137,7 @@ class SpaceSurvivor(arcade.Window):
         cloud.top = random.randint(10, self.height - 10)
 
         # Set its speed to a random speed heading left
-        cloud.velocity = (random.randint(-4, -3), 0)
+        cloud.velocity = (random.randint(-2, -1), 0)
 
         # Add it to the enemies list
         self.clouds_list.append(cloud)
@@ -156,6 +155,7 @@ class SpaceSurvivor(arcade.Window):
         self.clouds_list.draw()
         self.player.draw()
         self.projectile_list.draw()
+        self.bullet_list.draw()
 
         # if game is over is true
         if self.game_over:
@@ -187,13 +187,13 @@ class SpaceSurvivor(arcade.Window):
                 arcade.unschedule(self.add_enemy)
                 arcade.unschedule(self.add_cloud)
             else:
-                arcade.schedule(self.add_enemy, 0.4)
-                arcade.schedule(self.add_cloud, 1)
+                arcade.schedule(self.add_enemy, 6)
+                arcade.schedule(self.add_cloud, 4)
 
         if symbol == arcade.key.SPACE:
             # throwing projectiles against enemy
             self.fire_missile()
-            arcade.play_sound(self.projectile_sound)
+            self.projectile_sound.play(volume=0.05)
 
         if symbol == arcade.key.Z or symbol == arcade.key.UP:
             # move player up
@@ -239,6 +239,55 @@ class SpaceSurvivor(arcade.Window):
                 delta_time {float}: Time since the last update
         """
 
+        self.frame_count += 1
+
+        for enemy in self.enemies_list:
+
+            # First, calculate the angle to the player. We could do this
+            # only when the bullet fires, but in this case we will rotate
+            # the enemy to face the player each frame, so we'll do this
+            # each frame.
+
+            # Position the start at the enemy's current location
+            start_x = enemy.center_x
+            start_y = enemy.center_y
+
+            # Get the destination location for the bullet
+            dest_x = self.player.center_x
+            dest_y = self.player.center_y
+
+            # Do math to calculate how to get the bullet to the destination.
+            # Calculation the angle in radians between the start points
+            # and end points. This is the angle the bullet will travel.
+            x_diff = dest_x - start_x
+            y_diff = dest_y - start_y
+            angle = math.atan2(y_diff, x_diff)
+
+            # Set the enemy to face the player.
+            enemy.angle = math.degrees(angle)-90
+
+            # Shoot every 60 frames change of shooting each frame
+            if self.frame_count % 230 == 0:
+                bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
+                bullet.center_x = start_x
+                bullet.center_y = start_y
+
+                # Angle the bullet sprite
+                bullet.angle = math.degrees(angle)
+
+                # Taking into account the angle, calculate our change_x
+                # and change_y. Velocity is how fast the bullet travels.
+                bullet.change_x = math.cos(angle) * BULLET_SPEED
+                bullet.change_y = math.sin(angle) * BULLET_SPEED
+
+                self.bullet_list.append(bullet)
+
+        for bullet in self.bullet_list:
+            if bullet.top < 0:
+                bullet.remove_from_sprite_lists()
+
+        self.bullet_list.update()
+
         # if the game paused do nothing.
         if self.paused:
             return
@@ -249,16 +298,21 @@ class SpaceSurvivor(arcade.Window):
 
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
-            arcade.play_sound(self.collision_sound)
+            arcade.play_sound(self.collision_sound, volume=0.01, pan=0.0)
             self.game_over = True
-            arcade.schedule(lambda delta_time: arcade.close_window(), 6)
+            arcade.schedule(lambda delta_time: arcade.close_window(), 3)
+
+        if self.player.collides_with_list(self.bullet_list):
+            arcade.play_sound(self.collision_sound, volume=0.01, pan=0.0)
+            self.game_over = True
+            arcade.schedule(lambda delta_time: arcade.close_window(), 3)
 
         # remove enemies those hit by projectiles
         for enemy in self.enemies_list:
             collisions = enemy.collides_with_list(self.projectile_list)
             if collisions:
                 enemy.remove_from_sprite_lists()
-                arcade.play_sound(self.enemyremoving_sound)
+                arcade.play_sound(self.enemyremoving_sound, volume=0.03, pan=0.0)
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 
