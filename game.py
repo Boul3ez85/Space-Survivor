@@ -4,7 +4,6 @@ import math
 import os
 import random
 
-
 SCREEN_WIDTH = 1366
 SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Space Survivor"
@@ -28,8 +27,8 @@ class FlyingSprite(arcade.Sprite):
 
         # Remove if off the screen
         if (
-            self.velocity[0] < 0 and self.right < 0
-            or self.velocity[0] > 0 and self.left > SCREEN_WIDTH
+                self.velocity[0] < 0 and self.right < 0
+                or self.velocity[0] > 0 and self.left > SCREEN_WIDTH
         ):
             self.remove_from_sprite_lists()
 
@@ -48,7 +47,7 @@ class SpaceSurvivor(arcade.Window):
 
         self.collision_sound = None
         self.music = None
-        self.enemyremoving_sound = None
+        self.enemyRemoving_sound = None
         self.projectile_sound = None
         self.background = None
         self.paused = False
@@ -60,23 +59,36 @@ class SpaceSurvivor(arcade.Window):
         self.projectile_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.explosions_list = None
-        
+        self.explosions_p_list = None
+
         # Pre-load the animation frame
-        self.explosion_texture_list = []
+        self.explosion_texture_list = None
+        self.explosion1_texture_list = None
 
         columns = 16
         count = 60
         sprite_width = 256
         sprite_height = 256
-        file_name = ":resources:images/spritesheets/explosion.png"
+        expl1 = ":resources:images/spritesheets/explosion.png"
+
+        column = 16
+        counts = 60
+        sprites_width = 256
+        sprites_height = 256
+        expl2 = ":resources:images/spritesheets/explosion.png"
 
         # Load the explosions from a sprite sheet
-        self.explosion_texture_list = arcade.load_spritesheet(file_name,
+        self.explosion_texture_list = arcade.load_spritesheet(expl1,
                                                               sprite_width,
                                                               sprite_height,
-                                                              columns, 
+                                                              columns,
                                                               count)
 
+        self.explosion1_texture = arcade.load_spritesheet(expl2,
+                                                          sprites_width,
+                                                          sprites_height,
+                                                          column,
+                                                          counts)
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -89,6 +101,7 @@ class SpaceSurvivor(arcade.Window):
         self.player.left = 0
         self.all_sprites.append(self.player)
         self.explosions_list = arcade.SpriteList()
+        self.explosions_p_list = arcade.SpriteList()
 
         # set the time interval that enemies and clouds appears
         arcade.schedule(self.add_enemy, 0.4)
@@ -99,7 +112,7 @@ class SpaceSurvivor(arcade.Window):
 
         # add collision sound
         self.collision_sound = arcade.load_sound("res/sounds/Explosion-SoundBible.com-2019248186.wav")
-        self.enemyremoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
+        self.enemyRemoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
 
         self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
 
@@ -177,13 +190,13 @@ class SpaceSurvivor(arcade.Window):
         self.projectile_list.draw()
         self.bullet_list.draw()
         self.explosions_list.draw()
+        self.explosions_p_list.draw()
 
         # if game is over is true
         if self.game_over:
             message = f"Game Over"
             arcade.draw_text(message, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 50,
                              align="center", anchor_x="center", anchor_y="center", bold=True)
-
 
     def on_key_press(self, symbol: int, modifiers: int):
         """ Handle user keyboard input
@@ -241,16 +254,16 @@ class SpaceSurvivor(arcade.Window):
         """
 
         if (symbol == arcade.key.Z
-            or symbol == arcade.key.S
-            or symbol == arcade.key.UP
-            or symbol == arcade.key.DOWN
+                or symbol == arcade.key.S
+                or symbol == arcade.key.UP
+                or symbol == arcade.key.DOWN
         ):
             self.player.change_y = 0
 
         if (symbol == arcade.key.Q
-            or symbol == arcade.key.D
-            or symbol == arcade.key.LEFT
-            or symbol == arcade.key.RIGHT
+                or symbol == arcade.key.D
+                or symbol == arcade.key.LEFT
+                or symbol == arcade.key.RIGHT
         ):
             self.player.change_x = 0
 
@@ -262,6 +275,7 @@ class SpaceSurvivor(arcade.Window):
 
         self.frame_count += 1
         self.explosions_list.update()
+        self.explosions_p_list.update()
 
         for enemy in self.enemies_list:
 
@@ -286,10 +300,10 @@ class SpaceSurvivor(arcade.Window):
             angle = math.atan2(y_diff, x_diff)
 
             # Set the enemy to face the player.
-            enemy.angle = math.degrees(angle)-90
+            enemy.angle = math.degrees(angle) - 90
 
             # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 230 == 0:
+            if self.frame_count % 250 == 0:
                 bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
                 bullet.center_x = start_x
                 bullet.center_y = start_y
@@ -315,11 +329,11 @@ class SpaceSurvivor(arcade.Window):
             # check if a projectile hit an enemy ship
             contact_list = arcade.check_for_collision_with_list(projectile, self.enemies_list)
 
-            # if it is the case
+            # if it is the case of contact projectile/enemy
             if len(contact_list) > 0:
                 # Make an explosion
                 explosion = Explosion(self.explosion_texture_list)
-                
+
                 # Move it to the location of the enemy ship
                 explosion.center_x = contact_list[0].center_x
                 explosion.center_y = contact_list[0].center_y
@@ -340,11 +354,47 @@ class SpaceSurvivor(arcade.Window):
 
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
+            for enemy in self.enemies_list:
+                # check if a projectile hit an enemy ship
+                hit_list = arcade.check_for_collision(enemy, self.player)
+
+                # if it is the case of contact projectile/enemy
+                if hit_list:
+                    # Make an explosion
+                    hit = Explosion(self.explosion1_texture)
+
+                    # Move it to the location of the enemy ship
+                    hit.center_x = self.player.center_x
+                    hit.center_y = self.player.center_y
+
+                    # update() to set image we start on
+                    hit.update()
+
+                    # Add to a list of sprites that are explosions
+                    self.explosions_p_list.append(hit)
             arcade.play_sound(self.collision_sound, volume=0.01, pan=0.0)
             self.game_over = True
             arcade.schedule(lambda delta_time: arcade.close_window(), 3)
 
         if self.player.collides_with_list(self.bullet_list):
+            for bullet in self.bullet_list:
+                # check if a projectile hit an enemy ship
+                hit_list = arcade.check_for_collision(bullet, self.player)
+
+                # if it is the case of contact projectile/enemy
+                if hit_list:
+                    # Make an explosion
+                    hit = Explosion(self.explosion1_texture)
+
+                    # Move it to the location of the enemy ship
+                    hit.center_x = self.player.center_x
+                    hit.center_y = self.player.center_y
+
+                    # update() to set image we start on
+                    hit.update()
+
+                    # Add to a list of sprites that are explosions
+                    self.explosions_p_list.append(hit)
             arcade.play_sound(self.collision_sound, volume=0.01, pan=0.0)
             self.game_over = True
             arcade.schedule(lambda delta_time: arcade.close_window(), 3)
@@ -354,7 +404,7 @@ class SpaceSurvivor(arcade.Window):
             collisions = enemy.collides_with_list(self.projectile_list)
             if collisions:
                 enemy.remove_from_sprite_lists()
-                arcade.play_sound(self.enemyremoving_sound, volume=0.03, pan=0.0)
+                arcade.play_sound(self.enemyRemoving_sound, volume=0.03, pan=0.0)
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 
@@ -385,7 +435,6 @@ class SpaceSurvivor(arcade.Window):
             )
 
 
-
 def main():
     """ Main method """
     game = SpaceSurvivor(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
@@ -396,3 +445,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
