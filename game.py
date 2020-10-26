@@ -69,12 +69,13 @@ class SpaceSurvivor(arcade.Window):
         count = 60
         sprite_width = 256
         sprite_height = 256
-        expl1 = ":resources:images/spritesheets/explosion.png"
 
         column = 16
         counts = 60
         sprites_width = 256
         sprites_height = 256
+        expl1 = ":resources:images/spritesheets/explosion.png"
+
         expl2 = ":resources:images/spritesheets/explosion.png"
 
         # Load the explosions from a sprite sheet
@@ -121,10 +122,7 @@ class SpaceSurvivor(arcade.Window):
         self.music.play(volume=0.02)
 
     def fire_missile(self):
-        """Fires a missile against the incoming enemies
-        """
-        if self.paused:
-            return
+        """Fires a missile against the incoming enemies"""
 
         projectile = FlyingSprite("res/images/spaceMissiles_038.png")
 
@@ -143,7 +141,6 @@ class SpaceSurvivor(arcade.Window):
         """
 
         enemy = FlyingSprite("res/images/pngwave.png", SCALING_ENEMY)
-        # enemy.angle = 180
 
         # Set its position to a random height and off screen right
         enemy.left = random.randint(self.width, self.width + 80)
@@ -192,10 +189,16 @@ class SpaceSurvivor(arcade.Window):
         self.explosions_list.draw()
         self.explosions_p_list.draw()
 
-        # if game is over is true
+        # if game is over
         if self.game_over:
             message = f"Game Over"
             arcade.draw_text(message, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 50,
+                             align="center", anchor_x="center", anchor_y="center", bold=True)
+
+        # if game is paused
+        if self.paused:
+            message1 = f"PAUSED"
+            arcade.draw_text(message1, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 50,
                              align="center", anchor_x="center", anchor_y="center", bold=True)
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -277,6 +280,10 @@ class SpaceSurvivor(arcade.Window):
         self.explosions_list.update()
         self.explosions_p_list.update()
 
+        # if the game paused do nothing.
+        if self.paused:
+            return
+
         for enemy in self.enemies_list:
 
             # First, calculate the angle to the player. We could do this
@@ -303,7 +310,7 @@ class SpaceSurvivor(arcade.Window):
             enemy.angle = math.degrees(angle) - 90
 
             # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 250 == 0:
+            if self.frame_count % 250 == 0 and not self.paused:
                 bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
                 bullet.center_x = start_x
                 bullet.center_y = start_y
@@ -343,10 +350,6 @@ class SpaceSurvivor(arcade.Window):
 
                 # Add to a list of sprites that are explosions
                 self.explosions_list.append(explosion)
-
-        # if the game paused do nothing.
-        if self.paused:
-            return
 
         # remove player from the window once the game is over
         if self.game_over:
