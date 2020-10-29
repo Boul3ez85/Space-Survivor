@@ -19,6 +19,19 @@ Space survivor is a 2D game written in python3 with the [Arcade library](https:/
 
 You can do that either on Windows, Linux or Mac OS, and you can go step by step by following this link:
 - [Installation](https://arcade.academy/installation.html)
+- OpenGL 3.3 or higher
+- GLIB 2.29 or higher
+
+Lunix users, there's an issue with playing sound so you must to switch to sound branch:
+- clone the repo
+- switch to sound branch using these commands:
+```
+sudo git checkout -b sound-pyglet
+```
+then:
+```
+sudo git rebase --onto version_2_4a12 origin/developement
+```
 
 ---
 
@@ -38,16 +51,19 @@ python3 game.py
 | Left          | Q or arr.LEFT |
 | Up            | Z or arr.UP   |
 | Down          | S or arr.DOWN |
-| Pause         | P or Espace 	|
+| Fire		| Espace	|
+| Pause         | P	 	|
 | Quit          | ESCAPE        |
 
 ---
 
 ## Screenshots:
 
-![](https://i.imgur.com/Xupy2zt.png)
+![](https://i.imgur.com/Koh5Jto.png)
 
-![](https://i.imgur.com/oGsGJYy.png)
+![](https://i.imgur.com/2RG7vw1.png)
 
-![](https://i.imgur.com/5l77Uqn.png)
+![](https://i.imgur.com/Jo85ZgC.png)
+
+![](https://i.imgur.com/SNZDdTB.png)
 
