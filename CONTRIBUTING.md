@@ -1,6 +1,6 @@
 # Contribution Guidelines to Space-Survivor
 
----
+
 
 ***Thanks for your interest in contributing!***
 
