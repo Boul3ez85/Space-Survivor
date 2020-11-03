@@ -22,7 +22,12 @@ You can do that either on Windows, Linux or Mac OS, and you can go step by step 
 - OpenGL 3.3 or higher
 - GLIB 2.29 or higher
 
-Lunix users, there's an issue with playing sound so you must to switch to sound branch:
+if you have already installed an old version just update you library using this command:
+```
+sudo python3 -m pip install --upgrade arcade
+```
+
+Lunix users, if you encounter an issue with playing sound so you must to switch to sound branch:
 - clone the repo
 - switch to sound branch using these commands:
 ```
@@ -67,3 +72,7 @@ python3 game.py
 
 ![](https://i.imgur.com/SNZDdTB.png)
 
+
+## Contributing:
+
+First, contributing is always welcome! Also there's a [Contributing](https://github.com/Boul3ez85/Space-Survivor/blob/main/CONTRIBUTING.md) guidelines that can helps you
