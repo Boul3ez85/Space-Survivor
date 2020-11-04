@@ -108,8 +108,7 @@ class SpaceSurvivor(arcade.Window):
 
         self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
 
-        # playing music background in loop
-        # arcade.schedule(self.play_background_music, 16)
+        # playing music background
         self.music.play(volume=0.09)
 
     def fire_missile(self):
@@ -218,7 +217,7 @@ class SpaceSurvivor(arcade.Window):
             if self.paused:
                 arcade.unschedule(self.add_enemy)
                 arcade.unschedule(self.add_cloud)
-                not self.fire_missile()
+                # not self.fire_missile()
             else:
                 arcade.schedule(self.add_enemy, 1)
                 arcade.schedule(self.add_cloud, 3)
@@ -281,7 +280,6 @@ class SpaceSurvivor(arcade.Window):
             return
 
         for enemy in self.enemies_list:
-
             # First, calculate the angle to the player. We could do this
             # only when the bullet fires, but in this case we will rotate
             # the enemy to face the player each frame, so we'll do this
