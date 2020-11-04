@@ -80,7 +80,7 @@ First, contributing is always welcome! Also there's a [Contributing](https://git
 
 ## LICENSE
 
-![](https://imgur.com/2E5Y7OL)
+![](https://i.imgur.com/2E5Y7OL.png)
 
 MIT License
 
