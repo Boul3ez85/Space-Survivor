@@ -217,7 +217,6 @@ class SpaceSurvivor(arcade.Window):
             if self.paused:
                 arcade.unschedule(self.add_enemy)
                 arcade.unschedule(self.add_cloud)
-                # not self.fire_missile()
             else:
                 arcade.schedule(self.add_enemy, 1)
                 arcade.schedule(self.add_cloud, 3)
