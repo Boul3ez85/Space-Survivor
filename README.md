@@ -76,3 +76,12 @@ python3 game.py
 ## Contributing:
 
 First, contributing is always welcome! Also there's a [Contributing](https://github.com/Boul3ez85/Space-Survivor/blob/main/CONTRIBUTING.md) guidelines that can helps you
+
+
+## LICENSE
+
+![](https://i.imgur.com/Yi5hrYp.jpg)
+
+MIT License
+
+Copyright (c) 2020 Moez
