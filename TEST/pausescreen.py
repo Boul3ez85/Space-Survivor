@@ -25,15 +25,16 @@ class PauseView(arcade.View):
         # Draw player, for effect, on pause screen.
         # The previous View (GameView) was passed in
         # and saved in self.game_view.
-        self.player = self.game_view.self.player
-        self.player.draw()
+        player_sprite = self.game_view.player_sprite
+        player_sprite.draw()
 
         # draw an orange filter over him
-        arcade.draw_lrtb_rectangle_filled(left=self.player.left,
-                                          right=self.player.right,
-                                          top=self.player.top,
-                                          bottom=self.player.bottom,
+        arcade.draw_lrtb_rectangle_filled(left=player_sprite.left,
+                                          right=player_sprite.right,
+                                          top=player_sprite.top,
+                                          bottom=player_sprite.bottom,
                                           color=arcade.color.ORANGE + (200,))
+
 
         arcade.draw_text("PAUSED", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,
                          arcade.color.BLACK, font_size=50, anchor_x="center")

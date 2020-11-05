@@ -37,7 +37,7 @@ class FlyingSprite(arcade.Sprite):
         # Remove if off the screen
         if (
                 self.velocity[0] < 0 and self.right < 0
-                or self.velocity[0] > 0 and self.left > WIDTH
+                or self.velocity[0] > 0 and self.left > SCREEN_WIDTH
         ):
             self.remove_from_sprite_lists()
 
@@ -92,13 +92,13 @@ class SpaceSurvivor(arcade.View):
         """ Set up the game variables. Call to re-start the game. """
 
         self.background = arcade.load_texture("res/images/space_survivor-background.webp")
-        self.Menu = arcade.load_texture("res/images/starting.png")
-        self.instruction = arcade.load_texture("res/images/instruction.png")
+        #self.Menu = arcade.load_texture("res/images/starting.png")
+        #self.instruction = arcade.load_texture("res/images/instruction.png")
         self.player = arcade.Sprite("res/images/space_survivor-space-ship.webp", SCALING)
-        self.player.center_y = HEIGHT / 2
+        self.player.center_y = SCREEN_HEIGHT / 2
         self.player.left = 0
         self.all_sprites.append(self.player)
-        # self.explosions_list = arcade.SpriteList()
+        self.explosions_list = arcade.SpriteList()
 
         # set the time interval that enemies and clouds appears
         arcade.schedule(self.add_enemy, 1)
@@ -143,8 +143,8 @@ class SpaceSurvivor(arcade.View):
         enemy = FlyingSprite("res/images/space_survivor-aliens.webp", SCALING_ENEMY)
 
         # Set its position to a random height and off screen right
-        enemy.left = random.randint(WIDTH, WIDTH + 80)
-        enemy.top = random.randint(20, HEIGHT - 20)
+        enemy.left = random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 80)
+        enemy.top = random.randint(20, SCREEN_HEIGHT - 20)
 
         # Set its speed to a random speed heading left
         enemy.velocity = (random.randint(-4, -2), 0)
@@ -163,8 +163,8 @@ class SpaceSurvivor(arcade.View):
         cloud = FlyingSprite("res/images/space_survivor-comet-2.webp", SCALING)
 
         # Set its position to a random height and off screen right
-        cloud.left = random.randint(WIDTH, WIDTH + 80)
-        cloud.top = random.randint(10, HEIGHT - 10)
+        cloud.left = random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 80)
+        cloud.top = random.randint(10, SCREEN_HEIGHT - 10)
 
         # Set its speed to a random speed heading left
         cloud.velocity = (random.randint(-2, -1), 0)
@@ -178,7 +178,7 @@ class SpaceSurvivor(arcade.View):
         arcade.start_render()
 
         # Divide screen width/height by two to get the horizontal/vertical center of the screen
-        arcade.draw_texture_rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT,
+        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT,
                                       self.background)
 
         self.enemies_list.draw()
@@ -273,7 +273,7 @@ class SpaceSurvivor(arcade.View):
         """
 
         self.frame_count += 1
-        self.explosions_list.update()
+        # self.explosions_list.update()
         self.time_taken += delta_time
 
         for enemy in self.enemies_list:
@@ -302,7 +302,7 @@ class SpaceSurvivor(arcade.View):
             enemy.angle = math.degrees(angle) - 90
 
             # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 300 == 0 and not self.paused:
+            if self.frame_count % 300 == 0:
                 bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
                 # bullet.angle = 180
                 bullet.center_x = start_x
@@ -355,7 +355,6 @@ class SpaceSurvivor(arcade.View):
             game_over_view.time_taken = self.time_taken
             self.window.set_mouse_visible(True)
             self.window.show_view(game_over_view)
-            arcade.schedule(lambda delta_time: arcade.close_window(), 7)
 
         if self.player.collides_with_list(self.bullet_list):
             self.player.remove_from_sprite_lists()
@@ -363,7 +362,6 @@ class SpaceSurvivor(arcade.View):
             game_over_view.time_taken = self.time_taken
             self.window.set_mouse_visible(True)
             self.window.show_view(game_over_view)
-            arcade.schedule(lambda delta_time: arcade.close_window(), 3)
 
         # remove enemies those hit by projectiles
         for enemy in self.enemies_list:
@@ -382,11 +380,11 @@ class SpaceSurvivor(arcade.View):
             enemy.update()
 
         # Keep the player on screen
-        if self.player.left < 0 or self.player.right > WIDTH:
+        if self.player.left < 0 or self.player.right > SCREEN_WIDTH:
             self.player.right = SCREEN_WIDTH
             self.player.left = 0
 
-        if self.player.bottom < 0 or self.player.top > HEIGHT:
+        if self.player.bottom < 0 or self.player.top > SCREEN_HEIGHT:
             self.player.bottom = 0
             self.player.top = SCREEN_HEIGHT
 
@@ -404,7 +402,6 @@ def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.total_score = 0
     menu_view = MenuView()
-    menu_view.setup()
     window.show_view(menu_view)
     arcade.run()
 
