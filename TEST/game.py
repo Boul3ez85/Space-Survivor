@@ -133,6 +133,7 @@ class SpaceSurvivor(arcade.View):
 
         self.projectile_list.append(projectile)
         self.all_sprites.append(projectile)
+        print(self.all_sprites.append(projectile))
 
     def add_enemy(self, delta_time: float):
         """Adds a new enemy to the screen
@@ -273,7 +274,7 @@ class SpaceSurvivor(arcade.View):
         """
 
         self.frame_count += 1
-        # self.explosions_list.update()
+        self.explosions_list.update()
         self.time_taken += delta_time
 
         for enemy in self.enemies_list:
@@ -344,10 +345,6 @@ class SpaceSurvivor(arcade.View):
                 # Add to a list of sprites that are explosions
                 self.explosions_list.append(explosion)
 
-        # remove player from the window once the game is over
-        # if self.game_over:
-            self.player.remove_from_sprite_lists()
-
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
             self.player.remove_from_sprite_lists()
@@ -380,22 +377,17 @@ class SpaceSurvivor(arcade.View):
             enemy.update()
 
         # Keep the player on screen
-        if self.player.left < 0 or self.player.right > SCREEN_WIDTH:
-            self.player.right = SCREEN_WIDTH
-            self.player.left = 0
-
-        if self.player.bottom < 0 or self.player.top > SCREEN_HEIGHT:
-            self.player.bottom = 0
+        if self.player.top > SCREEN_HEIGHT:
             self.player.top = SCREEN_HEIGHT
 
-        # Update everything
-        for sprite in self.all_sprites:
-            sprite.center_x = int(
-                sprite.center_x + sprite.change_x * delta_time
-            )
-            sprite.center_y = int(
-                sprite.center_y + sprite.change_y * delta_time
-            )
+        if self.player.right > SCREEN_WIDTH:
+            self.player.right = SCREEN_WIDTH
+
+        if self.player.bottom < 0:
+            self.player.bottom = 0
+
+        if self.player.left < 0:
+            self.player.left = 0
 
 
 def main():
