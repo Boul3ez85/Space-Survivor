@@ -51,13 +51,11 @@ class SpaceSurvivor(arcade.View):
         self.time_taken = 0
         
         self.frame_count = 0
-        
+        self.pause = False
         self.music = None
         self.enemyRemoving_sound = None
         self.projectile_sound = None
         self.background = None
-        #self.paused = False
-        #self.game_over = False
         self.enemies_list = arcade.SpriteList()
         self.clouds_list = arcade.SpriteList()
         self.all_sprites = arcade.SpriteList()
@@ -92,8 +90,6 @@ class SpaceSurvivor(arcade.View):
         """ Set up the game variables. Call to re-start the game. """
 
         self.background = arcade.load_texture("res/images/space_survivor-background.webp")
-        #self.Menu = arcade.load_texture("res/images/starting.png")
-        #self.instruction = arcade.load_texture("res/images/instruction.png")
         self.player = arcade.Sprite("res/images/space_survivor-space-ship.webp", SCALING)
         self.player.center_y = SCREEN_HEIGHT / 2
         self.player.left = 0
@@ -126,14 +122,13 @@ class SpaceSurvivor(arcade.View):
 
         projectile = FlyingSprite("res/images/laserRed06.png")
 
-        projectile.center_x = self.player.center_x + 50
+        projectile.center_x = self.player.center_x + 70
         projectile.center_y = self.player.center_y
         projectile.angle = -90
         projectile.velocity = (20, 0)
 
         self.projectile_list.append(projectile)
         self.all_sprites.append(projectile)
-        print(self.all_sprites.append(projectile))
 
     def add_enemy(self, delta_time: float):
         """Adds a new enemy to the screen
@@ -145,7 +140,8 @@ class SpaceSurvivor(arcade.View):
 
         # Set its position to a random height and off screen right
         enemy.left = random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 80)
-        enemy.top = random.randint(20, SCREEN_HEIGHT - 20)
+        enemy.top = random.randint(40, SCREEN_HEIGHT - 80)
+        enemy.bottom = random.randint(40, SCREEN_HEIGHT - 80)
 
         # Set its speed to a random speed heading left
         enemy.velocity = (random.randint(-4, -2), 0)
@@ -191,10 +187,9 @@ class SpaceSurvivor(arcade.View):
 
 
         # Draw our score on the screen, scrolling it with the viewport
-        output = f"Score: {self.score}"
-        arcade.draw_text(output, 10, 30, arcade.color.WHITE, 14)
-        output_total = f"Total Score: {self.window.total_score}"
-        arcade.draw_text(output_total, 10, 10, arcade.color.WHITE, 14)
+        score = f"Score: {self.score}"
+        arcade.draw_text(score, 10 + self.view_left, 740 + self.view_top,
+                         arcade.csscolor.YELLOW, 20)
 
     def on_key_press(self, symbol: int, modifiers: int):
         """ Handle user keyboard input
@@ -213,12 +208,12 @@ class SpaceSurvivor(arcade.View):
 
         if symbol == arcade.key.P:
             # pause the game
-            pause = PauseView(self)
-            self.window.show_view(pause)
-            if pause:
+            self.pause = PauseView(self)
+            self.window.show_view(self.pause)
+            
+            if self.pause:
                 arcade.unschedule(self.add_enemy)
                 arcade.unschedule(self.add_cloud)
-                # not self.fire_missile()
             else:
                 arcade.schedule(self.add_enemy, 1)
                 arcade.schedule(self.add_cloud, 3)
@@ -227,7 +222,7 @@ class SpaceSurvivor(arcade.View):
         if symbol == arcade.key.SPACE:
             # throwing projectiles against enemy
             self.fire_missile()
-            self.projectile_sound.play(volume=0.05)
+            self.projectile_sound.play(volume=0.04)
 
         if symbol == arcade.key.Z or symbol == arcade.key.UP:
             # move player up
@@ -303,9 +298,8 @@ class SpaceSurvivor(arcade.View):
             enemy.angle = math.degrees(angle) - 90
 
             # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 300 == 0:
+            if self.frame_count % 300 == 0 and not self.pause:
                 bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
-                # bullet.angle = 180
                 bullet.center_x = start_x
                 bullet.center_y = start_y
 
@@ -368,7 +362,6 @@ class SpaceSurvivor(arcade.View):
                 arcade.play_sound(self.enemyRemoving_sound, volume=0.03, pan=0.0)
                 # Add one to the score
                 self.score += 10
-                self.window.total_score += 10
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 
@@ -392,7 +385,6 @@ class SpaceSurvivor(arcade.View):
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    window.total_score = 0
     menu_view = MenuView()
     window.show_view(menu_view)
     arcade.run()

@@ -11,28 +11,30 @@ class GameOverView(arcade.View):
     def __init__(self):
         super().__init__()
         self.time_taken = 0
+        
 
     def on_show(self):
-        arcade.set_background_color(arcade.color.BLACK)
+        self.background_image = arcade.load_texture("res/images/darkPurple.png")
+
 
     def on_draw(self):
         arcade.start_render()
         """
         Draw "Game over" across the screen.
         """
-        arcade.draw_text("Game Over", 240, 400, arcade.color.WHITE, 54)
-        arcade.draw_text("Click to restart", 310, 300, arcade.color.WHITE, 24)
+        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT,
+                                      self.background_image)
+
+        arcade.draw_text("Game Over", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.color.WHITE, 54, anchor_x="center")
+        arcade.draw_text("Click to restart", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50, arcade.color.WHITE, 24, anchor_x="center")
 
         time_taken_formatted = f"{round(self.time_taken, 2)} seconds"
         arcade.draw_text(f"Time taken: {time_taken_formatted}",
                          SCREEN_WIDTH/2,
-                         200,
+                         SCREEN_HEIGHT / 2 - 100,
                          arcade.color.GRAY,
                          font_size=15,
                          anchor_x="center")
-
-        output_total = f"Total Score: {self.window.total_score}"
-        arcade.draw_text(output_total, 10, 10, arcade.color.WHITE, 14)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         from game import SpaceSurvivor
