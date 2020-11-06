@@ -51,7 +51,7 @@ class SpaceSurvivor(arcade.View):
         self.time_taken = 0
         
         self.frame_count = 0
-        self.pause = False
+        self.pause = PauseView(self)
         self.music = None
         self.enemyRemoving_sound = None
         self.projectile_sound = None
@@ -110,7 +110,7 @@ class SpaceSurvivor(arcade.View):
 
         # playing music background in loop
         # arcade.schedule(self.play_background_music, 16)
-        self.music.play(volume=0.09)
+        self.music.play(volume=0.09, loop=True)
 
     def on_show(self):
         self.background = arcade.load_texture("res/images/space_survivor-background.webp")
@@ -191,6 +191,20 @@ class SpaceSurvivor(arcade.View):
         arcade.draw_text(score, 10 + self.view_left, 740 + self.view_top,
                          arcade.csscolor.YELLOW, 20)
 
+    def toggle_pause(self):
+        # If there is a pause view active we need to unpause the game
+        if self.pause:
+            self.pause = None
+            arcade.schedule(self.add_enemy, 1)
+            arcade.schedule(self.add_cloud, 3)
+        # Otherwise we pause the game and show the pause view
+        else:
+            arcade.unschedule(self.add_enemy)
+            arcade.unschedule(self.add_cloud)
+            self.pause = PauseView(self)
+            self.window.show_view(self.pause)
+            self.fire_missile()
+
     def on_key_press(self, symbol: int, modifiers: int):
         """ Handle user keyboard input
         q or ESCAPE: Quit the game
@@ -207,17 +221,7 @@ class SpaceSurvivor(arcade.View):
             arcade.close_window()
 
         if symbol == arcade.key.P:
-            # pause the game
-            self.pause = PauseView(self)
-            self.window.show_view(self.pause)
-            
-            if self.pause:
-                arcade.unschedule(self.add_enemy)
-                arcade.unschedule(self.add_cloud)
-            else:
-                arcade.schedule(self.add_enemy, 1)
-                arcade.schedule(self.add_cloud, 3)
-                self.fire_missile()
+            self.toggle_pause()
 
         if symbol == arcade.key.SPACE:
             # throwing projectiles against enemy
@@ -298,7 +302,7 @@ class SpaceSurvivor(arcade.View):
             enemy.angle = math.degrees(angle) - 90
 
             # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 300 == 0 and not self.pause:
+            if self.frame_count % 300 == 0:
                 bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
                 bullet.center_x = start_x
                 bullet.center_y = start_y
