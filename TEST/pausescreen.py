@@ -41,11 +41,11 @@ class PauseView(arcade.View):
                          arcade.color.BLACK, font_size=50, anchor_x="center")
 
         # Show tip to return or reset
-        arcade.draw_text("Press Esc. to return",
+        arcade.draw_text("Press P to return",
                          SCREEN_WIDTH/2,
                          SCREEN_HEIGHT/2,
                          arcade.color.BLACK,
-                         font_size=20,
+                         font_size=30,
                          anchor_x="center")
         arcade.draw_text("Press Enter to reset",
                          SCREEN_WIDTH/2,
@@ -57,10 +57,12 @@ class PauseView(arcade.View):
 
     def on_key_press(self, key, _modifiers):
         from game import SpaceSurvivor
-        if key == arcade.key.P:   # resume game
+        # resume game
+        if key == arcade.key.P:
             self.window.show_view(self.game_view)
             self.game_view.toggle_pause()
-        elif key == arcade.key.ENTER:  # reset game
+        # reset game
+        elif key == arcade.key.ENTER:
             game_view = SpaceSurvivor()
             game_view.setup()
             self.window.show_view(game_view)

@@ -366,7 +366,7 @@ class SpaceSurvivor(arcade.View):
                 arcade.play_sound(self.enemyRemoving_sound, volume=0.03, pan=0.0)
                 # Add one to the score
                 self.score += 10
-                if self.score == 50:
+                if self.score == 100:
                     win = YouwinView(self)
                     self.window.show_view(win)
                 for projectile in collisions:

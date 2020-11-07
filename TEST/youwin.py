@@ -12,22 +12,23 @@ SPRITE_SCALING = 0.5
 
 
 class YouwinView(arcade.View):
+    """ Represent the You win view class"""
     def __init__(self, game_view):
         super().__init__()
         self.game_view = game_view
-        # Don't show the mouse cursor
-        self.window.set_mouse_visible(True)
 
     def on_show(self):
         arcade.set_background_color(arcade.color.GREEN)
-        # Don't show the mouse cursor
-        self.window.set_mouse_visible(False)
+
 
     def on_draw(self):
         arcade.start_render()
 
-        arcade.draw_text("Youhou..You Win", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,
+        arcade.draw_text("Youhou..You Win", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
+
+        arcade.draw_text("Click to restart or Press 'q' to quit", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50,
+                         arcade.color.BLACK, font_size=20, anchor_x="center")
 
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
