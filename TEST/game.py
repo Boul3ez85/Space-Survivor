@@ -7,6 +7,7 @@ from menuscreen import MenuView
 from instructionscreen import InstructionView
 from pausescreen import PauseView
 from gameoverscreen import GameOverView
+from youwin import YouwinView
 
 
 res = os.path.dirname(os.path.abspath(__file__))
@@ -101,7 +102,7 @@ class SpaceSurvivor(arcade.View):
         arcade.schedule(self.add_cloud, 3)
 
         # play music in game
-        self.music = arcade.load_sound("res/sounds/audio_mangler_space_drone_5_206.mp3")
+        self.music = arcade.load_sound("res/sounds/alien-spaceship_daniel_simion.wav")
 
         # add collision sound
         self.enemyRemoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
@@ -109,7 +110,6 @@ class SpaceSurvivor(arcade.View):
         self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
 
         # playing music background in loop
-        # arcade.schedule(self.play_background_music, 16)
         self.music.play(volume=0.09, loop=True)
 
     def on_show(self):
@@ -366,6 +366,9 @@ class SpaceSurvivor(arcade.View):
                 arcade.play_sound(self.enemyRemoving_sound, volume=0.03, pan=0.0)
                 # Add one to the score
                 self.score += 10
+                if self.score == 50:
+                    win = YouwinView(self)
+                    self.window.show_view(win)
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 

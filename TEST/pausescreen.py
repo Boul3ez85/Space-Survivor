@@ -60,9 +60,6 @@ class PauseView(arcade.View):
         if key == arcade.key.P:   # resume game
             self.window.show_view(self.game_view)
             self.game_view.toggle_pause()
-            # arcade.schedule(self.add_enemy, 1)
-            # arcade.schedule(self.add_cloud, 3)
-            #self.projectile_sound.stop()
         elif key == arcade.key.ENTER:  # reset game
             game_view = SpaceSurvivor()
             game_view.setup()
