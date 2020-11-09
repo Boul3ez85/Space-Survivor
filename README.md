@@ -11,38 +11,33 @@
 
 ## Game synopsis:
 
-Space survivor is a 2D game written in python3 with the [Arcade library](https://arcade.academy/), where the player play a spaceship trying avoid missiles.
+Space survivor is a 2D game built in python3 with the [Arcade library](https://arcade.academy/), where the player with his/her spaceship eliminates enemy ships and avoiding its bullets with just keyboard command.
 
 ---
 
 ## Library & Dependencies installation:
 
-You can do that either on Windows, Linux or Mac OS, and you can go step by step by following this link:
+Original the game developed under ubnutu (Linux) with all the arcade library stuff but it can also played or developed either on Windows, or on Mac OS, and you can go step by step with the installation by following this link:
 - [Installation](https://arcade.academy/installation.html)
 - OpenGL 3.3 or higher
-- GLIB 2.29 or higher
-
-if you have already installed an old version just update you library using this command:
-```
-sudo python3 -m pip install --upgrade arcade
-```
 
 Lunix users, if you encounter an issue with playing sound so you must to switch to sound branch:
 - clone the repo
-- switch to sound branch using these commands:
+- switch to sound branch using these commands (in the arcade library where you find setup.pu file):
 ```
 sudo git checkout -b sound-pyglet
 ```
 then:
 ```
-sudo git rebase --onto version_2_4a12 origin/developement
+sudo git rebase developement
 ```
 
 ---
 
 ### Run the game:
 
-If you choose to run the game from the Terminal you can use the following command:
+If you choose to run the game from the Terminal you can use the following command or you can use the gui "ran" button on your IDE:
+
 ```python
 python3 game.py
 ```
@@ -64,13 +59,17 @@ python3 game.py
 
 ## Screenshots:
 
-![](https://i.imgur.com/Koh5Jto.png)
+![](https://i.imgur.com/Zfwrowv.png)
 
-![](https://i.imgur.com/2RG7vw1.png)
+![](https://i.imgur.com/DYsWxzD.png)
 
 ![](https://i.imgur.com/Jo85ZgC.png)
 
-![](https://i.imgur.com/SNZDdTB.png)
+![](https://i.imgur.com/fZde4li.png)
+
+![](https://i.imgur.com/DcnARCi.png)
+
+![](https://i.imgur.com/tHtl3WZ.png)
 
 
 ## Contributing:
