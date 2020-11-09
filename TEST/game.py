@@ -8,6 +8,8 @@ from instructionscreen import InstructionView
 from pausescreen import PauseView
 from gameoverscreen import GameOverView
 from youwin import YouwinView
+import pyglet
+from typing import Tuple
 
 
 res = os.path.dirname(os.path.abspath(__file__))
@@ -86,6 +88,8 @@ class SpaceSurvivor(arcade.View):
 
         # Keep track of the score
         self.score = 0
+
+        self.fullscreen = True
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -185,7 +189,6 @@ class SpaceSurvivor(arcade.View):
         self.bullet_list.draw()
         self.explosions_list.draw()
 
-
         # Draw our score on the screen, scrolling it with the viewport
         score = f"Score: {self.score}"
         arcade.draw_text(score, 10 + self.view_left, 740 + self.view_top,
@@ -215,6 +218,8 @@ class SpaceSurvivor(arcade.View):
             symbol {int}: Which key was pressed
             modifiers {int}: Which modifiers were pressed
         """
+
+        """Called whenever a key is pressed. """
 
         if symbol == arcade.key.ESCAPE:
             # quit game window

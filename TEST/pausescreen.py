@@ -8,7 +8,6 @@ os.chdir(res)
 
 SCREEN_WIDTH = 1366
 SCREEN_HEIGHT = 768
-SPRITE_SCALING = 0.5
 
 
 class PauseView(arcade.View):
@@ -18,7 +17,7 @@ class PauseView(arcade.View):
         self.player = arcade.Sprite()
 
     def on_show(self):
-        arcade.set_background_color(arcade.color.ORANGE)
+        arcade.set_background_color(arcade.color.GRAY)
 
     def on_draw(self):
         arcade.start_render()
@@ -34,7 +33,7 @@ class PauseView(arcade.View):
                                           right=self.player.right,
                                           top=self.player.top,
                                           bottom=self.player.bottom,
-                                          color=arcade.color.ORANGE + (200,))
+                                          color=arcade.color.GRAY + (200,))
 
 
         arcade.draw_text("PAUSED", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,

@@ -8,7 +8,6 @@ os.chdir(res)
 
 SCREEN_WIDTH = 1366
 SCREEN_HEIGHT = 768
-SPRITE_SCALING = 0.5
 
 
 class YouwinView(arcade.View):
@@ -16,20 +15,16 @@ class YouwinView(arcade.View):
     def __init__(self, game_view):
         super().__init__()
         self.game_view = game_view
+        self.background = None
 
     def on_show(self):
-        arcade.set_background_color(arcade.color.GREEN)
-
+        self.background = arcade.load_texture("res/images/win.png")
 
     def on_draw(self):
         arcade.start_render()
-
-        arcade.draw_text("Youhou..You Win", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
-
-        arcade.draw_text("Click to restart or Press 'q' to quit", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50,
-                         arcade.color.BLACK, font_size=20, anchor_x="center")
-
+        
+        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT,
+                                      self.background)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         from game import SpaceSurvivor
@@ -40,5 +35,3 @@ class YouwinView(arcade.View):
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.Q:
             arcade.close_window()
-
-
