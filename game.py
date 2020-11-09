@@ -3,6 +3,18 @@ from explosion import Explosion
 import math
 import os
 import random
+from menuscreen import MenuView
+from instructionscreen import InstructionView
+from pausescreen import PauseView
+from gameoverscreen import GameOverView
+from youwin import YouwinView
+import pyglet
+from typing import Tuple
+
+
+res = os.path.dirname(os.path.abspath(__file__))
+os.chdir(res)
+
 
 SCREEN_WIDTH = 1366
 SCREEN_HEIGHT = 768
@@ -33,24 +45,20 @@ class FlyingSprite(arcade.Sprite):
             self.remove_from_sprite_lists()
 
 
-class SpaceSurvivor(arcade.Window):
+class SpaceSurvivor(arcade.View):
     """ Main application class."""
 
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title, fullscreen=True)
+    def __init__(self):
+        super().__init__()
 
-        # makes sure to pull images from the same directory the source file is in.
-        res = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(res)
-
+        self.time_taken = 0
+        
         self.frame_count = 0
-
+        self.pause = PauseView(self)
         self.music = None
         self.enemyRemoving_sound = None
         self.projectile_sound = None
         self.background = None
-        self.paused = False
-        self.game_over = False
         self.enemies_list = arcade.SpriteList()
         self.clouds_list = arcade.SpriteList()
         self.all_sprites = arcade.SpriteList()
@@ -68,15 +76,12 @@ class SpaceSurvivor(arcade.Window):
         sprite_height = 256
 
         expl1 = ":resources:images/spritesheets/explosion.png"
-
-
         # Load the explosions from a sprite sheet
         self.explosion_texture_list = arcade.load_spritesheet(expl1,
                                                               sprite_width,
                                                               sprite_height,
                                                               columns,
                                                               count)
-
         # Used to keep track of our scrolling
         self.view_top = 0
         self.view_left = 0
@@ -84,14 +89,14 @@ class SpaceSurvivor(arcade.Window):
         # Keep track of the score
         self.score = 0
 
+        self.fullscreen = True
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
 
         self.background = arcade.load_texture("res/images/space_survivor-background.webp")
-
         self.player = arcade.Sprite("res/images/space_survivor-space-ship.webp", SCALING)
-        self.player.center_y = self.height / 2
+        self.player.center_y = SCREEN_HEIGHT / 2
         self.player.left = 0
         self.all_sprites.append(self.player)
         self.explosions_list = arcade.SpriteList()
@@ -101,22 +106,27 @@ class SpaceSurvivor(arcade.Window):
         arcade.schedule(self.add_cloud, 3)
 
         # play music in game
-        self.music = arcade.load_sound("res/sounds/audio_mangler_space_drone_5_206.mp3")
+        self.music = arcade.load_sound("res/sounds/alien-spaceship_daniel_simion.wav")
 
         # add collision sound
         self.enemyRemoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
 
         self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
 
-        # playing music background
-        self.music.play(volume=0.09)
+        # playing music background in loop
+        self.music.play(volume=0.05, loop=True)
+
+    def on_show(self):
+        self.background = arcade.load_texture("res/images/space_survivor-background.webp")
+        # Don't show the mouse cursor
+        self.window.set_mouse_visible(False)
 
     def fire_missile(self):
         """Fires a missile against the incoming enemies"""
 
         projectile = FlyingSprite("res/images/laserRed06.png")
 
-        projectile.center_x = self.player.center_x + 50
+        projectile.center_x = self.player.center_x + 70
         projectile.center_y = self.player.center_y
         projectile.angle = -90
         projectile.velocity = (20, 0)
@@ -133,8 +143,9 @@ class SpaceSurvivor(arcade.Window):
         enemy = FlyingSprite("res/images/space_survivor-aliens.webp", SCALING_ENEMY)
 
         # Set its position to a random height and off screen right
-        enemy.left = random.randint(self.width, self.width + 80)
-        enemy.top = random.randint(20, self.height - 20)
+        enemy.left = random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 80)
+        enemy.top = random.randint(40, SCREEN_HEIGHT - 80)
+        enemy.bottom = random.randint(40, SCREEN_HEIGHT - 80)
 
         # Set its speed to a random speed heading left
         enemy.velocity = (random.randint(-4, -2), 0)
@@ -153,8 +164,8 @@ class SpaceSurvivor(arcade.Window):
         cloud = FlyingSprite("res/images/space_survivor-comet-2.webp", SCALING)
 
         # Set its position to a random height and off screen right
-        cloud.left = random.randint(self.width, self.width + 80)
-        cloud.top = random.randint(10, self.height - 10)
+        cloud.left = random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 80)
+        cloud.top = random.randint(10, SCREEN_HEIGHT - 10)
 
         # Set its speed to a random speed heading left
         cloud.velocity = (random.randint(-2, -1), 0)
@@ -178,23 +189,23 @@ class SpaceSurvivor(arcade.Window):
         self.bullet_list.draw()
         self.explosions_list.draw()
 
-        # if game is over
-        if self.game_over:
-            message = f"Game Over"
-            arcade.draw_text(message, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 70,
-                             align="center", anchor_x="center", anchor_y="center")
-
-        # if game is paused
-        if self.paused:
-            message1 = f"PAUSED"
-            arcade.draw_text(message1, self.width / 2, self.height / 2, arcade.color.RADICAL_RED, 70,
-                             align="center", anchor_x="center", anchor_y="center")
-            self.projectile_sound.stop()
-
         # Draw our score on the screen, scrolling it with the viewport
-        score_text = f"Score = {self.score}"
-        arcade.draw_text(score_text, 10 + self.view_left, 740 + self.view_top,
+        score = f"Score: {self.score}"
+        arcade.draw_text(score, 10 + self.view_left, 740 + self.view_top,
                          arcade.csscolor.YELLOW, 20)
+
+    def toggle_pause(self):
+        # If there is a pause view active we need to unpause the game
+        if self.pause:
+            self.pause = None
+            arcade.schedule(self.add_enemy, 1)
+            arcade.schedule(self.add_cloud, 3)
+        # Otherwise we pause the game and show the pause view
+        else:
+            arcade.unschedule(self.add_enemy)
+            arcade.unschedule(self.add_cloud)
+            self.pause = PauseView(self)
+            self.window.show_view(self.pause)
 
     def on_key_press(self, symbol: int, modifiers: int):
         """ Handle user keyboard input
@@ -207,25 +218,19 @@ class SpaceSurvivor(arcade.Window):
             modifiers {int}: Which modifiers were pressed
         """
 
+        """Called whenever a key is pressed. """
+
         if symbol == arcade.key.ESCAPE:
             # quit game window
             arcade.close_window()
 
         if symbol == arcade.key.P:
-            # pause the game
-            self.paused = not self.paused
-            if self.paused:
-                arcade.unschedule(self.add_enemy)
-                arcade.unschedule(self.add_cloud)
-            else:
-                arcade.schedule(self.add_enemy, 1)
-                arcade.schedule(self.add_cloud, 3)
-                self.fire_missile()
+            self.toggle_pause()
 
         if symbol == arcade.key.SPACE:
             # throwing projectiles against enemy
             self.fire_missile()
-            self.projectile_sound.play(volume=0.05)
+            self.projectile_sound.play(volume=0.04)
 
         if symbol == arcade.key.Z or symbol == arcade.key.UP:
             # move player up
@@ -273,12 +278,10 @@ class SpaceSurvivor(arcade.Window):
 
         self.frame_count += 1
         self.explosions_list.update()
-
-        # if the game paused do nothing.
-        if self.paused:
-            return
+        self.time_taken += delta_time
 
         for enemy in self.enemies_list:
+
             # First, calculate the angle to the player. We could do this
             # only when the bullet fires, but in this case we will rotate
             # the enemy to face the player each frame, so we'll do this
@@ -303,9 +306,8 @@ class SpaceSurvivor(arcade.Window):
             enemy.angle = math.degrees(angle) - 90
 
             # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 300 == 0 and not self.paused:
+            if self.frame_count % 300 == 0:
                 bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
-                # bullet.angle = 180
                 bullet.center_x = start_x
                 bullet.center_y = start_y
 
@@ -322,7 +324,6 @@ class SpaceSurvivor(arcade.Window):
                 # for bullet in self.bullet_list():
                 if bullet.left < 0:
                     bullet.remove_from_sprite_lists()
-
 
         self.bullet_list.update()
 
@@ -346,18 +347,20 @@ class SpaceSurvivor(arcade.Window):
                 # Add to a list of sprites that are explosions
                 self.explosions_list.append(explosion)
 
-        # remove player from the window once the game is over
-        if self.game_over:
-            self.player.remove_from_sprite_lists()
-
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
-            self.game_over = True
-            arcade.schedule(lambda delta_time: arcade.close_window(), 3)
+            self.player.remove_from_sprite_lists()
+            game_over_view = GameOverView()
+            game_over_view.time_taken = self.time_taken
+            self.window.set_mouse_visible(True)
+            self.window.show_view(game_over_view)
 
         if self.player.collides_with_list(self.bullet_list):
-            self.game_over = True
-            arcade.schedule(lambda delta_time: arcade.close_window(), 3)
+            self.player.remove_from_sprite_lists()
+            game_over_view = GameOverView()
+            game_over_view.time_taken = self.time_taken
+            self.window.set_mouse_visible(True)
+            self.window.show_view(game_over_view)
 
         # remove enemies those hit by projectiles
         for enemy in self.enemies_list:
@@ -367,6 +370,9 @@ class SpaceSurvivor(arcade.Window):
                 arcade.play_sound(self.enemyRemoving_sound, volume=0.03, pan=0.0)
                 # Add one to the score
                 self.score += 10
+                if self.score == 100:
+                    win = YouwinView(self)
+                    self.window.show_view(win)
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 
@@ -375,11 +381,11 @@ class SpaceSurvivor(arcade.Window):
             enemy.update()
 
         # Keep the player on screen
-        if self.player.top > self.height:
-            self.player.top = self.height
+        if self.player.top > SCREEN_HEIGHT:
+            self.player.top = SCREEN_HEIGHT
 
-        if self.player.right > self.width:
-            self.player.right = self.width
+        if self.player.right > SCREEN_WIDTH:
+            self.player.right = SCREEN_WIDTH
 
         if self.player.bottom < 0:
             self.player.bottom = 0
@@ -387,21 +393,11 @@ class SpaceSurvivor(arcade.Window):
         if self.player.left < 0:
             self.player.left = 0
 
-        # Update everything
-        for sprite in self.all_sprites:
-            sprite.center_x = int(
-                sprite.center_x + sprite.change_x * delta_time
-            )
-            sprite.center_y = int(
-                sprite.center_y + sprite.change_y * delta_time
-            )
-
 
 def main():
-    """ Main method """
-    game = SpaceSurvivor(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
-    game = Explosion
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    menu_view = MenuView()
+    window.show_view(menu_view)
     arcade.run()
 
 
