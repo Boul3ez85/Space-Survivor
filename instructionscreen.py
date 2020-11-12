@@ -68,7 +68,7 @@ class InstructionView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         self.game_view.setup()
-        self.window.show_view(game_view)
+        self.window.show_view(self.game_view)
 
     def on_update(self, delta_time: float):
         self.metorites_list.update()

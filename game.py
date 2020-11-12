@@ -48,7 +48,7 @@ class FlyingSprite(arcade.Sprite):
 class SpaceSurvivor(arcade.View):
     """ Main application class."""
 
-    def __init__(self, game_view):
+    def __init__(self):
         super().__init__()
 
         self.time_taken = 0
@@ -354,13 +354,11 @@ class SpaceSurvivor(arcade.View):
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
             self.player.remove_from_sprite_lists()
-            game_over_view.time_taken = self.time_taken
             self.window.set_mouse_visible(True)
             self.window.show_view(self.gameover_view)
 
         if self.player.collides_with_list(self.bullet_list):
             self.player.remove_from_sprite_lists()
-            game_over_view.time_taken = self.time_taken
             self.window.set_mouse_visible(True)
             self.window.show_view(self.gameover_view)
 
@@ -374,6 +372,7 @@ class SpaceSurvivor(arcade.View):
                 self.score += 10
                 if self.score == 100:
                     self.window.show_view(self.win_view)
+                    self.window.set_mouse_visible(True)
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 

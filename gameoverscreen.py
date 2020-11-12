@@ -37,7 +37,7 @@ class GameOverView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         self.game_view.setup()
-        self.window.show_view(game_view)
+        self.window.show_view(self.game_view)
 
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.Q:
