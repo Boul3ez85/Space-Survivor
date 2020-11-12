@@ -48,7 +48,7 @@ class FlyingSprite(arcade.Sprite):
 class SpaceSurvivor(arcade.View):
     """ Main application class."""
 
-    def __init__(self):
+    def __init__(self, game_view):
         super().__init__()
 
         self.time_taken = 0
@@ -91,6 +91,9 @@ class SpaceSurvivor(arcade.View):
         
         # define the youwin view
         self.win_view = YouwinView(self)
+
+        #define the gameover view
+        self.gameover_view = GameOverView(self)
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -351,17 +354,15 @@ class SpaceSurvivor(arcade.View):
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
             self.player.remove_from_sprite_lists()
-            game_over_view = GameOverView()
             game_over_view.time_taken = self.time_taken
             self.window.set_mouse_visible(True)
-            self.window.show_view(game_over_view)
+            self.window.show_view(self.gameover_view)
 
         if self.player.collides_with_list(self.bullet_list):
             self.player.remove_from_sprite_lists()
-            game_over_view = GameOverView()
             game_over_view.time_taken = self.time_taken
             self.window.set_mouse_visible(True)
-            self.window.show_view(game_over_view)
+            self.window.show_view(self.gameover_view)
 
         # remove enemies those hit by projectiles
         for enemy in self.enemies_list:
