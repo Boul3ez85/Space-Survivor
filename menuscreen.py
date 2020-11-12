@@ -35,7 +35,8 @@ class FlyingSprite(arcade.Sprite):
             self.remove_from_sprite_lists()
 
 class MenuView(arcade.View):
-    def __init__(self):
+    def __init__(self, instruction_view):
+        self.instruction_view = InstructionView()
         super().__init__()
 
         self.metorites_list = arcade.SpriteList()
@@ -67,9 +68,7 @@ class MenuView(arcade.View):
         self.metorites_list.draw()
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        game = InstructionView()
-        self.window.show_view(game)
+        self.window.show_view(self.instruction_view)
 
     def on_update(self, delta_time: float):
-
         self.metorites_list.update()

@@ -57,14 +57,14 @@ class PauseView(arcade.View):
     def on_key_press(self, key, _modifiers):
         from game import SpaceSurvivor
         # resume game
-        if key == arcade.key.P:
+        if symbol == arcade.key.P:
             self.window.show_view(self.game_view)
             self.game_view.toggle_pause()
         # reset game
-        elif key == arcade.key.ENTER:
+        if symbol == arcade.key.ENTER:
             game_view = SpaceSurvivor()
             game_view.setup()
             self.window.show_view(game_view)
         # quit the game
-        elif key == arcade.key.Q:
+        if symbol == arcade.key.Q:
             arcade.close_window()
