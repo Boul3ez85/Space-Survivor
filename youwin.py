@@ -28,9 +28,7 @@ class YouwinView(arcade.View):
                                       self.background)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        from game import SpaceSurvivor
-        game_view = SpaceSurvivor()
-        game_view.setup()
+        self.game_view.setup()
         self.window.show_view(game_view)
 
     def on_key_press(self, key, _modifiers):

@@ -12,8 +12,9 @@ os.chdir(res)
 
 
 class GameOverView(arcade.View):
-    def __init__(self):
+    def __init__(self, game_view):
         super().__init__()
+        self.game_view = game_view
         self.time_taken = 0
         self.background_image = None
 
@@ -35,9 +36,7 @@ class GameOverView(arcade.View):
         arcade.draw_text("Or press Q to quit", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 18, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        from game import SpaceSurvivor
-        game_view = SpaceSurvivor()
-        game_view.setup()
+        self.game_view.setup()
         self.window.show_view(game_view)
 
     def on_key_press(self, key, _modifiers):

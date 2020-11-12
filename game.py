@@ -88,8 +88,9 @@ class SpaceSurvivor(arcade.View):
 
         # Keep track of the score
         self.score = 0
-
-        self.fullscreen = True
+        
+        # define the youwin view
+        self.win_view = YouwinView(self)
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -371,8 +372,7 @@ class SpaceSurvivor(arcade.View):
                 # Add one to the score
                 self.score += 10
                 if self.score == 100:
-                    win = YouwinView(self)
-                    self.window.show_view(win)
+                    self.window.show_view(self.win_view)
                 for projectile in collisions:
                     projectile.remove_from_sprite_lists()
 
