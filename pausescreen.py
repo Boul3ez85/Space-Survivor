@@ -62,7 +62,7 @@ class PauseView(arcade.View):
         # reset game
         if key == arcade.key.ENTER:
             self.game_view.setup()
-            self.window.show_view(game_view)
+            self.window.show_view(self.game_view)
         # quit the game
         if key == arcade.key.Q:
             arcade.close_window()

@@ -50,21 +50,20 @@ class SpaceSurvivor(arcade.View):
 
     def __init__(self):
         super().__init__()
-
+       
         self.time_taken = 0
-        
         self.frame_count = 0
         self.pause = PauseView(self)
         self.music = None
         self.enemyRemoving_sound = None
         self.projectile_sound = None
         self.background = None
-        self.enemies_list = arcade.SpriteList()
-        self.clouds_list = arcade.SpriteList()
-        self.all_sprites = arcade.SpriteList()
+        self.enemies_list = None
+        self.clouds_list = None
+        self.all_sprites = None
         self.player = arcade.Sprite()
-        self.projectile_list = arcade.SpriteList()
-        self.bullet_list = arcade.SpriteList()
+        self.projectile_list = None
+        self.bullet_list = None
         self.explosions_list = None
 
         # Pre-load the animation frame
@@ -97,6 +96,11 @@ class SpaceSurvivor(arcade.View):
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
+        self.enemies_list = arcade.SpriteList()
+        self.clouds_list = arcade.SpriteList()
+        self.all_sprites = arcade.SpriteList()
+        self.projectile_list = arcade.SpriteList()
+        self.bullet_list = arcade.SpriteList()
 
         self.background = arcade.load_texture("res/images/space_survivor-background.webp")
         self.player = arcade.Sprite("res/images/space_survivor-space-ship.webp", SCALING)
@@ -106,8 +110,13 @@ class SpaceSurvivor(arcade.View):
         self.explosions_list = arcade.SpriteList()
 
         # set the time interval that enemies and clouds appears
-        arcade.schedule(self.add_enemy, 1)
-        arcade.schedule(self.add_cloud, 3)
+        self.start_spawning()
+
+        # Keep track of the score
+        self.score = 0
+
+        #keep track of the time_taken
+        self.time_taken = 0
 
         # play music in game
         self.music = arcade.load_sound("res/sounds/alien-spaceship_daniel_simion.wav")
@@ -198,16 +207,22 @@ class SpaceSurvivor(arcade.View):
         arcade.draw_text(score, 10 + self.view_left, 740 + self.view_top,
                          arcade.csscolor.YELLOW, 20)
 
+    def stop_spawning(self):
+        arcade.unschedule(self.add_enemy)
+        arcade.unschedule(self.add_cloud)
+
+    def start_spawning(self):
+        arcade.schedule(self.add_enemy, 1)
+        arcade.schedule(self.add_cloud, 3)
+
     def toggle_pause(self):
         # If there is a pause view active we need to unpause the game
         if self.pause:
             self.pause = None
-            arcade.schedule(self.add_enemy, 1)
-            arcade.schedule(self.add_cloud, 3)
+            self.start_spawning()
         # Otherwise we pause the game and show the pause view
         else:
-            arcade.unschedule(self.add_enemy)
-            arcade.unschedule(self.add_cloud)
+            self.stop_spawning()
             self.pause = PauseView(self)
             self.window.show_view(self.pause)
 
@@ -354,11 +369,13 @@ class SpaceSurvivor(arcade.View):
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
             self.player.remove_from_sprite_lists()
+            self.stop_spawning()
             self.window.set_mouse_visible(True)
             self.window.show_view(self.gameover_view)
 
         if self.player.collides_with_list(self.bullet_list):
             self.player.remove_from_sprite_lists()
+            self.stop_spawning()
             self.window.set_mouse_visible(True)
             self.window.show_view(self.gameover_view)
 
