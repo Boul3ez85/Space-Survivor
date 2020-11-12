@@ -388,6 +388,7 @@ class SpaceSurvivor(arcade.View):
                 # Add one to the score
                 self.score += 10
                 if self.score == 100:
+                    self.stop_spawning()
                     self.window.show_view(self.win_view)
                     self.window.set_mouse_visible(True)
                 for projectile in collisions:
