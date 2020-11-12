@@ -35,9 +35,9 @@ class FlyingSprite(arcade.Sprite):
             self.remove_from_sprite_lists()
 
 class MenuView(arcade.View):
-    def __init__(self, instruction_view):
-        self.instruction_view = InstructionView()
+    def __init__(self):
         super().__init__()
+        self.instruction_view = InstructionView()
 
         self.metorites_list = arcade.SpriteList()
         self.background = None

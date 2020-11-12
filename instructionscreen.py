@@ -36,6 +36,8 @@ class FlyingSprite(arcade.Sprite):
 class InstructionView(arcade.View):
     def __init__(self):
         super().__init__()
+        from game import SpaceSurvivor
+        self.game_view = SpaceSurvivor()
 
         self.metorites_list = arcade.SpriteList()
         self.background = None
@@ -65,11 +67,8 @@ class InstructionView(arcade.View):
         self.metorites_list.draw()
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        from game import SpaceSurvivor
-        game_view = SpaceSurvivor()
-        game_view.setup()
+        self.game_view.setup()
         self.window.show_view(game_view)
 
     def on_update(self, delta_time: float):
-
         self.metorites_list.update()
