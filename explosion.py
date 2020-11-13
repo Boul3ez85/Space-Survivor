@@ -19,7 +19,7 @@ class Explosion(arcade.Sprite):
 
     def update(self):
         """update to the next animation frame"""
-        self.current_texture += 1
+        self.current_texture += 2
         if self.current_texture < len(self.textures):
             self.set_texture(self.current_texture)
         else:
