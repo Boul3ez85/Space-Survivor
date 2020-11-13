@@ -121,10 +121,13 @@ class SpaceSurvivor(arcade.View):
         # play music in game
         self.music = arcade.load_sound("res/sounds/alien-spaceship_daniel_simion.wav")
 
-        # add collision sound
+        # play collision sound
         self.enemyRemoving_sound = arcade.load_sound("res/sounds/zap2.ogg")
 
         self.projectile_sound = arcade.load_sound("res/sounds/laser9.ogg")
+
+        # play explosion player ship sound
+        self.ship_explosion_sound = arcade.load_sound("res/sounds/Explosion+1.wav")
 
         # playing music background in loop
         self.music.play(volume=0.05, loop=True)
@@ -369,12 +372,14 @@ class SpaceSurvivor(arcade.View):
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
             self.player.remove_from_sprite_lists()
+            self.ship_explosion_sound.play(volume=0.9)
             self.stop_spawning()
             self.window.set_mouse_visible(True)
             self.window.show_view(self.gameover_view)
 
         if self.player.collides_with_list(self.bullet_list):
             self.player.remove_from_sprite_lists()
+            self.ship_explosion_sound.play(volume=0.9)
             self.stop_spawning()
             self.window.set_mouse_visible(True)
             self.window.show_view(self.gameover_view)
