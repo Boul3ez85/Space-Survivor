@@ -8,8 +8,7 @@ from instructionscreen import InstructionView
 from pausescreen import PauseView
 from gameoverscreen import GameOverView
 from youwin import YouwinView
-import pyglet
-from typing import Tuple
+from explosionShip import Explosionplayer
 
 
 res = os.path.dirname(os.path.abspath(__file__))
@@ -65,8 +64,38 @@ class SpaceSurvivor(arcade.View):
         self.projectile_list = None
         self.bullet_list = None
         self.explosions_list = None
+        self.explosionShip_list = None
 
-        # Pre-load the animation frame
+
+        # Pre-load the explosion player ship animation frame
+        self.explosionship_texture_list = []
+
+        columns1 = 16
+        count1 = 60
+        sprite1_width = 256
+        sprite1_height = 256
+
+        # define explosion player ship list
+        explosion_list = ["res/images/tank_explosion1.png",
+                          "res/images/tank_explosion2.png",
+                          "res/images/tank_explosion3.png",
+                          "res/images/tank_explosion4.png",
+                          "res/images/tank_explosion5.png",
+                          "res/images/tank_explosion6.png",
+                          "res/images/tank_explosion7.png",
+                          "res/images/tank_explosion8.png",
+                          "res/images/tank_explosion9.png",
+                          "res/images/tank_explosion10.png",
+                          "res/images/tank_explosion11.png",
+                          "res/images/tank_explosion12.png",]
+
+        self.explosionship_texture_list = [explosion_list,
+                                           sprite1_width,
+                                           sprite1_height,
+                                           columns1,
+                                           count1]
+
+        # Pre-load the explosion enemy sprites animation frame
         self.explosion_texture_list = []
 
         columns = 16
@@ -107,7 +136,9 @@ class SpaceSurvivor(arcade.View):
         self.player.center_y = SCREEN_HEIGHT / 2
         self.player.left = 0
         self.all_sprites.append(self.player)
+        # add explosion effects to sprite list
         self.explosions_list = arcade.SpriteList()
+        self.explosionShip_list = arcade.SpriteList()
 
         # set the time interval that enemies and clouds appears
         self.start_spawning()
@@ -138,7 +169,7 @@ class SpaceSurvivor(arcade.View):
         self.window.set_mouse_visible(False)
 
     def fire_missile(self):
-        """Fires a missile against the incoming enemies"""
+        """enable player Fires a missile against the incoming enemies"""
 
         projectile = FlyingSprite("res/images/laserRed06.png")
 
@@ -204,6 +235,7 @@ class SpaceSurvivor(arcade.View):
         self.projectile_list.draw()
         self.bullet_list.draw()
         self.explosions_list.draw()
+        self.explosionShip_list.draw()
 
         # Draw our score on the screen, scrolling it with the viewport
         score = f"Score: {self.score}"
@@ -300,6 +332,7 @@ class SpaceSurvivor(arcade.View):
 
         self.frame_count += 1
         self.explosions_list.update()
+        self.explosionShip_list.update()
         self.time_taken += delta_time
 
         for enemy in self.enemies_list:
@@ -356,7 +389,7 @@ class SpaceSurvivor(arcade.View):
 
             # if it is the case of contact projectile/enemy
             if len(contact_list) > 0:
-                # Make an explosion
+                # play the explosion
                 explosion = Explosion(self.explosion_texture_list)
 
                 # Move it to the location of the enemy ship
@@ -368,6 +401,25 @@ class SpaceSurvivor(arcade.View):
 
                 # Add to a list of sprites that are explosions
                 self.explosions_list.append(explosion)
+
+        # loop through each bullet to check if it hits player
+        for bullet in self.bullet_list:
+            hit_list = arcade.check_for_collision(bullet, self.player)
+
+            # if the collision bullet/player is true
+            if len(hit_list):
+                # play the explosion
+                explosion1 = Explosionplayer(self.explosionship_texture_list)
+
+                # play it in the player position
+                explosion1.center_x = hit_list[0].center_x
+                explosion1.center_y = hit_list[0].center_y
+
+                # update() to set image we start on
+                explosion1.update()
+
+                # add to list of sprites
+                self.explosionShip_list.append(explosion1)
 
         # check for collision
         if len(self.player.collides_with_list(self.enemies_list)) > 0:
