@@ -1,0 +1,278 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400");
+
+/* General rules */
+
+html,
+body {
+    font-family: "Open Sans", sans-serif;
+    color: #999999;
+}
+
+header {
+    overflow: auto;
+    height: 66px;
+}
+
+::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #6d6d6d;
+    opacity: 0.8;
+    /* Firefox */
+}
+
+.full-height {
+    height: 100vh;
+}
+
+h1 {
+    font-size: 50px;
+    font-weight: 300;
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: 300;
+}
+
+h3 {
+    font-size: 21px;
+}
+
+h4 {
+    font-size: 18px;
+}
+
+p {
+    font-size: 14px;
+}
+
+
+/* Header */
+
+#header-img {
+    height: 50px;
+    width: auto;
+}
+
+.navbar-brand {
+    margin-left: 1rem;
+}
+
+a .nav-link {
+    color: #426f39;
+}
+
+.navbar-brand:hover,
+.nav-link:hover {
+    background-color: #dda407d3;
+}
+
+
+/* Home section */
+
+#home {
+    background: linear-gradient(rgba(20, 20, 20, 0.5), rgba(20, 20, 20, 0.5)), url(https://i.imgur.com/JTTqoQL.jpg) center / cover;
+}
+
+#home h1,
+#home p {
+    color: rgb(255, 123, 0);
+    font-weight: bold;
+}
+
+
+/* Project section */
+
+#project {
+    background-color: #000000;
+    color: white;
+}
+
+#project h1 {
+    text-align: center;
+    color: #6d6d6d;
+}
+
+#project h2 {
+    color: #6d6d6d;
+}
+
+.project-title {
+    margin: 40px auto;
+}
+
+.landing-text {
+    padding-top: 20%;
+}
+
+.presentation {
+    margin: 50px 0;
+}
+
+.fa-3x {
+    margin-bottom: 40px;
+}
+
+.fab.fa-envira {
+    color: #426f39;
+}
+
+.fas.fa-truck {
+    color: #999999;
+}
+
+.fas.fa-heart {
+    color: #d7302d;
+}
+
+#project h1 {
+    margin-top: 100px;
+}
+
+#project h2 {
+    padding: 0.5em 1em;
+}
+
+#project p {
+    padding: 1em;
+}
+
+.flex-container {
+    margin: 0 auto;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.item {
+    width: 300px;
+}
+
+.banner-bottom {
+    border-radius: 2px;
+    background: white url(https://images.unsplash.com/photo-1503040421714-b569d90342cb?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0fe2b083d343b9a805c1d660ee73e165) center / cover;
+}
+
+#video {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2em;
+}
+
+
+/* Contact section */
+
+#contact {
+    height: 100vh;
+    background: #2990aa;
+    color: #ffffff;
+}
+
+#contact h1 {
+    padding: 2em 0 1em 0;
+}
+
+.contact-heading {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+form {
+    margin: 0 auto;
+    width: 60%;
+}
+
+form .email {
+    width: 400px;
+    margin: 0 auto;
+    background-color: transparent;
+    color: #6d6d6d;
+    border: 1px solid #6d6d6d;
+    border-bottom-style: solid;
+    border-left-style: none;
+    border-right-style: none;
+    border-top-style: none;
+}
+
+form .email:focus {
+    outline: 0;
+    border: 2px solid #8cbe82;
+    border-bottom-style: solid;
+    border-left-style: none;
+    border-right-style: none;
+    border-top-style: none;
+}
+
+.email-label {
+    padding: 2em;
+}
+
+.btn-send {
+    color: #ffffff;
+    display: block;
+    margin: 0 auto;
+    background-color: #8cbe82;
+    border: none;
+    padding: 0.75em 2.25em;
+    border-radius: 14px;
+}
+
+.btn-send:hover {
+    background-color: #77a16e;
+}
+
+
+/* Media queries */
+
+@media (max-width: 575.98px) {
+    .landing-text {
+        padding-top: 60%;
+    }
+    form .email {
+        width: 100px;
+    }
+    input#email {
+        width: 100px;
+    }
+    iframe {
+        width: 75%;
+        height: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .landing-text {
+        padding-top: 50%;
+        width: 300px;
+    }
+    form {
+        text-align: center;
+        margin: 0 auto;
+        width: 80%;
+    }
+    form .email {
+        width: 300px;
+    }
+    .email-label {
+        padding: 1em;
+    }
+    input#email {
+        width: 200px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    form {
+        margin: 0 auto;
+        width: 80%;
+    }
+    form .email {
+        width: 400px;
+    }
+    .email-label {
+        padding: 1em;
+    }
+}
+
+@media (max-width: 1199.98px) {}
