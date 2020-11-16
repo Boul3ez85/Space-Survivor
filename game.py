@@ -72,26 +72,15 @@ class SpaceSurvivor(arcade.View):
 
         columns1 = 16
         count1 = 60
-        sprite1_width = 256
-        sprite1_height = 256
+        sprite_width = 256
+        sprite_height = 256
 
         # define explosion player ship list
-        explosion_list = ["res/images/tank_explosion1.png",
-                          "res/images/tank_explosion2.png",
-                          "res/images/tank_explosion3.png",
-                          "res/images/tank_explosion4.png",
-                          "res/images/tank_explosion5.png",
-                          "res/images/tank_explosion6.png",
-                          "res/images/tank_explosion7.png",
-                          "res/images/tank_explosion8.png",
-                          "res/images/tank_explosion9.png",
-                          "res/images/tank_explosion10.png",
-                          "res/images/tank_explosion11.png",
-                          "res/images/tank_explosion12.png",]
+        explosion_list = "images/new.png"
 
         self.explosionship_texture_list = [explosion_list,
-                                           sprite1_width,
-                                           sprite1_height,
+                                           sprite_width,
+                                           sprite_height,
                                            columns1,
                                            count1]
 
@@ -407,34 +396,40 @@ class SpaceSurvivor(arcade.View):
             hit_list = arcade.check_for_collision(bullet, self.player)
 
             # if the collision bullet/player is true
-            if len(hit_list):
+            if hit_list:
                 # play the explosion
-                explosion1 = Explosionplayer(self.explosionship_texture_list)
+                explosion1 = Explosion(self.explosionship_texture_list)
 
                 # play it in the player position
-                explosion1.center_x = hit_list[0].center_x
-                explosion1.center_y = hit_list[0].center_y
+                explosion1.center_x = self.player.center_x
+                explosion1.center_y = self.player.center_y
 
                 # update() to set image we start on
                 explosion1.update()
 
                 # add to list of sprites
                 self.explosionShip_list.append(explosion1)
+                
+                # Get rid of the bullet
+                bullet.remove_from_sprite_lists()
 
-        # check for collision
-        if len(self.player.collides_with_list(self.enemies_list)) > 0:
-            self.player.remove_from_sprite_lists()
-            self.ship_explosion_sound.play(volume=0.9)
-            self.stop_spawning()
-            self.window.set_mouse_visible(True)
-            self.window.show_view(self.gameover_view)
-
-        if self.player.collides_with_list(self.bullet_list):
-            self.player.remove_from_sprite_lists()
-            self.ship_explosion_sound.play(volume=0.9)
-            self.stop_spawning()
-            self.window.set_mouse_visible(True)
-            self.window.show_view(self.gameover_view)
+            # check for collision player enemies_list
+            if len(self.player.collides_with_list(self.enemies_list)) > 0:
+                self.player.remove_from_sprite_lists()
+                self.ship_explosion_sound.play(volume=0.9)
+                arcade.schedule(lambda delta_time: arcade.close_window(), 5)
+                self.stop_spawning()
+                self.window.set_mouse_visible(True)
+                self.window.show_view(self.gameover_view)
+            
+            # check for collision player bulet_list
+            if self.player.collides_with_list(self.bullet_list):
+                self.player.remove_from_sprite_lists()
+                arcade.schedule(lambda delta_time: arcade.close_window(), 5)
+                self.ship_explosion_sound.play(volume=0.9)
+                self.stop_spawning()
+                self.window.set_mouse_visible(True)
+                self.window.show_view(self.gameover_view)
 
         # remove enemies those hit by projectiles
         for enemy in self.enemies_list:
